@@ -21,7 +21,7 @@ const useAppwrite = (func) => {
     fetchData();
   }, []);
 
-  const refetch = () => fetch();
+  const refetch = () => fetchData();
 
   return { data, isLoading, refetch };
 };
