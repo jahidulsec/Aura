@@ -1,36 +1,53 @@
-import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from "react-native";
 import React, { useState } from "react";
 import icons from "../constants/icons";
-import images from "../constants/images";
+import { router, usePathname } from "expo-router";
 
 const SearchInput = ({
-  title,
-  value,
-  handleChangeText,
-  otherStyles,
+  initialQuery,
   ...props
 }) => {
-  const [showPassword, setShowPassword] = useState(false);
-  return (
-   
-      <View
-        className="border-2 border-black-200 w-full h-16 px-4 bg-black-100
-       rounded-2xl focus:border-secondary flex-row items-center space-x-4"
-      >
-        <TextInput
-          className="flex-1 text-white font-pregular mt-0.5 text-base"
-          value={value}
-          onChangeText={handleChangeText}
-          placeholder={props.placeholder}
-          placeholderTextColor="#7b7b8b"
-          secureTextEntry={title === "Password" && !showPassword}
-          keyboardType={props?.keyboardType}
-        />
+  const pathname = usePathname();
+  const [query, setQuery] = useState(initialQuery || "");
 
-        <TouchableOpacity>
-            <Image source={icons.search} className='w-5 h-5' resizeMode="contain" />
-        </TouchableOpacity>
-      </View>
+  return (
+    <View
+      className="border-2 border-black-200 w-full h-16 px-4 bg-black-100
+       rounded-2xl focus:border-secondary flex-row items-center space-x-4"
+    >
+      <TextInput
+        className="flex-1 text-white font-pregular mt-0.5 text-base"
+        value={query}
+        onChangeText={(e) => {
+          setQuery(e);
+        }}
+        placeholder={props.placeholder}
+        placeholderTextColor="#cdcde0"
+      />
+
+      <TouchableOpacity
+        onPress={() => {
+          if (!query) {
+            return Alert.alert(
+              "Missing query",
+              "Please input something to search results across database",
+            );
+          }
+
+          if (pathname.startsWith("search")) router.setParams({query})
+          else router.push(`search/${query}`)
+        }}
+      >
+        <Image source={icons.search} className="w-5 h-5" resizeMode="contain" />
+      </TouchableOpacity>
+    </View>
   );
 };
 
