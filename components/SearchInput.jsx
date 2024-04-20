@@ -12,6 +12,9 @@ import { router, usePathname } from "expo-router";
 
 const SearchInput = ({
   initialQuery,
+  bookmarkSearch,
+  handleChangeText,
+  value,
   ...props
 }) => {
   const pathname = usePathname();
@@ -24,9 +27,13 @@ const SearchInput = ({
     >
       <TextInput
         className="flex-1 text-white font-pregular mt-0.5 text-base"
-        value={query}
+        value={bookmarkSearch ? value : query}
         onChangeText={(e) => {
-          setQuery(e);
+          if (!bookmarkSearch) {
+            setQuery(e);
+          } else {
+            handleChangeText;
+          }
         }}
         placeholder={props.placeholder}
         placeholderTextColor="#cdcde0"
@@ -41,8 +48,8 @@ const SearchInput = ({
             );
           }
 
-          if (pathname.startsWith("search")) router.setParams({query})
-          else router.push(`search/${query}`)
+          if (pathname.startsWith("search")) router.setParams({ query });
+          else router.push(`search/${query}`);
         }}
       >
         <Image source={icons.search} className="w-5 h-5" resizeMode="contain" />
