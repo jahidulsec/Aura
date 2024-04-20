@@ -26,21 +26,6 @@ export const GlobalContextProvider = ({ children }) => {
     };
 
     getData();
-
-    //   .then((result) => {
-    //     if (result) {
-    //       setIsLoggedIn(true);
-    //       setUser(result);
-    //     } else {
-    //       setIsLoggedIn(false);
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   })
-    //   .finally(() => {
-    //     setIsLoading(false);
-    //   });
   }, []);
 
   return (
