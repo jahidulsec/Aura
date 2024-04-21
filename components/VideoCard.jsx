@@ -10,11 +10,11 @@ import {
 } from "react-native-popup-menu";
 import { usePathname } from "expo-router";
 import { useGlobalContext } from "../context/GlobalProvider";
-import useAppwrite from "../hooks/useAppwrite";
-import { addToBookmark } from "../lib/appwrite";
+import { addToBookmark, removeBookmark } from "../lib/appwrite";
 
 const VideoCard = ({
   video: {
+    $id,
     title,
     thumbnail,
     video,
@@ -29,6 +29,15 @@ const VideoCard = ({
     try {
       await addToBookmark(user.$id, { title, thumbnail, video });
       Alert.alert("Success", "Successfully added to bookmark");
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    }
+  };
+
+  const removeVideo = async () => {
+    try {
+      await removeBookmark($id);
+      Alert.alert("Success", "Successfully removed from bookmark");
     } catch (error) {
       Alert.alert("Error", error.message);
     }
@@ -74,7 +83,15 @@ const VideoCard = ({
             </View>
           </MenuTrigger>
           <MenuOptions>
-            <MenuOption onSelect={() => saveVideo()}>
+            <MenuOption
+              onSelect={() => {
+                if (!pathname.includes("bookmark")) {
+                  saveVideo();
+                } else {
+                  removeVideo();
+                }
+              }}
+            >
               {!pathname.includes("bookmark") ? (
                 <View className="px-4 py-2 flex-row gap-4 items-center">
                   <Image
