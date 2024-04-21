@@ -1,8 +1,8 @@
-import { View, Text, FlatList } from "react-native";
+import { View, Text, FlatList, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SearchInput from "../../components/SearchInput";
 import EmptyState from "../../components/EmptyState";
-import { getUserSavedPosts, searchPosts } from "../../lib/appwrite";
+import { getUserSavedPosts } from "../../lib/appwrite";
 import useAppwrite from "../../hooks/useAppwrite";
 import VideoCard from "../../components/VideoCard";
 import { useState } from "react";
@@ -10,8 +10,17 @@ import { useGlobalContext } from "../../context/GlobalProvider";
 
 const Bookmark = () => {
   const [query, setQuery] = useState("");
-  const {user} = useGlobalContext()
-  const { data: posts } = useAppwrite(() => getUserSavedPosts(user?.$id));
+  const { user } = useGlobalContext();
+  const [refreshing, setRefreshing] = useState(false);
+  const { data: posts, refetch } = useAppwrite(() =>
+    getUserSavedPosts(user?.$id),
+  );
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -29,7 +38,9 @@ const Bookmark = () => {
               placeholder="Search your saved videos"
               bookmarkSearch={true}
               value={query}
-              handleChangeText={(e) => {setQuery(e)}}
+              handleChangeText={(e) => {
+                setQuery(e);
+              }}
             />
           </View>
         )}
@@ -39,6 +50,9 @@ const Bookmark = () => {
             subtitle="No video found from your bookmark!"
           />
         )}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
     </SafeAreaView>
   );
