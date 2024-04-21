@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity, Alert } from "react-native";
 import React, { useState } from "react";
 import icons from "../constants/icons";
 import { ResizeMode, Video } from "expo-av";
@@ -9,6 +9,9 @@ import {
   MenuTrigger,
 } from "react-native-popup-menu";
 import { usePathname } from "expo-router";
+import { useGlobalContext } from "../context/GlobalProvider";
+import useAppwrite from "../hooks/useAppwrite";
+import { addToBookmark } from "../lib/appwrite";
 
 const VideoCard = ({
   video: {
@@ -20,6 +23,16 @@ const VideoCard = ({
 }) => {
   const [play, setPlay] = useState(false);
   const pathname = usePathname();
+  const { user } = useGlobalContext();
+
+  const saveVideo = async () => {
+    try {
+      await addToBookmark(user.$id, { title, thumbnail, video });
+      Alert.alert("Success", "Successfully added to bookmark");
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    }
+  };
 
   return (
     <View className="flex-col items-center px-4 mb-14">
@@ -61,7 +74,7 @@ const VideoCard = ({
             </View>
           </MenuTrigger>
           <MenuOptions>
-            <MenuOption>
+            <MenuOption onSelect={() => saveVideo()}>
               {!pathname.includes("bookmark") ? (
                 <View className="px-4 py-2 flex-row gap-4 items-center">
                   <Image
@@ -70,7 +83,9 @@ const VideoCard = ({
                     tintColor={`#FF9C01`}
                     resizeMode="contain"
                   />
-                  <Text className="text-secondary font-pregular pt-1">Add to bookmark</Text>
+                  <Text className="text-secondary font-pregular pt-1">
+                    Add to bookmark
+                  </Text>
                 </View>
               ) : (
                 <View className="px-4 py-2 flex-row gap-4 items-center">
@@ -80,7 +95,9 @@ const VideoCard = ({
                     tintColor={`#FF9C01`}
                     resizeMode="contain"
                   />
-                  <Text className="text-secondary font-pregular pt-1">Remove</Text>
+                  <Text className="text-secondary font-pregular pt-1">
+                    Remove
+                  </Text>
                 </View>
               )}
             </MenuOption>
