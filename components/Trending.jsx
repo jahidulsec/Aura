@@ -93,6 +93,7 @@ const Trending = ({ posts }) => {
       onViewableItemsChanged={viewableItemsChanged}
       viewabilityConfig={{ itemVisiblePercentThreshold: 70 }}
       contentOffset={{ x: 170 }}
+      showsHorizontalScrollIndicator={false}
     />
   );
 };
